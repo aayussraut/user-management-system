@@ -55,4 +55,31 @@ const find = (req, res) => {
   });
 };
 
-module.exports = { view, find };
+const form = (req, res) => {
+  return res.render("add-user");
+};
+
+const addUser = (req, res) => {
+
+  const {first_name,last_name,phone,email,comment}=req.body;
+  const searchItem = req.body.search;
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.log("Error connecting to DB", err);
+      return;
+    } else {
+      connection.query(
+        "Insert into user(first_name,last_name,phone,email,comments) values(?,?,?,?,?)",[first_name,last_name,phone,email,comment],
+        (err, rows) => {
+          if (err) {
+            console.log("Error querying DB", err);
+            return;
+          }
+          return res.render("add-user", { msg:"User Added Successfully." });
+        }
+      );
+    }
+  });
+};
+
+module.exports = { view, find ,addUser,form};
